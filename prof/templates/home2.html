@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Perguntas ao prompto:</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="exampleFormControlTextarea1">Pergunta:</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" name="question" rows="3"></textarea>
+    </div>
+    <button onclick="convertMarkdown()" type="submit" class="btn btn-primary">Enviar</button>
+</form>
+
+{% if response %}
+    <h2>Resposta:</h2>
+	<div id="htmlOutput2">
+	</div>
+	
+    <h2>Todas as perguntas e respostas salvas:</h2>
+    <textarea class="form-control" rows="10">
+        {% for entry in all_entries %}
+            Pergunta: {{ entry.question }}
+            Resposta: {{ entry.response }}
+            ---------------------------
+        {% endfor %}
+    </textarea>
+	   
+{% endif %}
+
+<script>
+        function convertMarkdown() {
+	
+    const converter = new showdown.Converter();
+    const markdownText = `{{ response|escapejs }}`;
+    const html = converter.makeHtml(markdownText);
+    document.getElementById('htmlOutput2').innerHTML = html;
+
+        }
+		window.onload = function() {
+            convertMarkdown();
+        };
+    </script>
+
+{% endblock %}
